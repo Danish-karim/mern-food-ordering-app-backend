@@ -22,6 +22,21 @@ type CheckoutSessionRequest = {
   restaurantId: string;
 };
 
+const getMyOrders = async (req: Request, res: Response) => {
+  try {
+    const orders = await Order.find({ user: req.userId })
+      .populate("restaurant")
+      .populate("user");
+
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Something went Wrong",
+    });
+  }
+};
+
 const stripeWebhookHandler = async (req: Request, res: Response) => {
   let event;
   try {
@@ -160,4 +175,5 @@ const createSession = async (
 export default {
   createCheckoutSession,
   stripeWebhookHandler,
+  getMyOrders,
 };
